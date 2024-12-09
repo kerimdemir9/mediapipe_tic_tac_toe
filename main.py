@@ -397,19 +397,32 @@ buttons = {
 
 def check_winner():
     global game_over
+    winner = None
+
+    # Check rows and columns for a winner
     for i in range(GRID_SIZE):
-        if grid[i][0] == grid[i][1] == grid[i][2] and grid[i][0] != "":
+        # Check row
+        if all(grid[i][j] == grid[i][0] and grid[i][j] != "" for j in range(GRID_SIZE)):
             game_over = True
             return grid[i][0]
-        if grid[0][i] == grid[1][i] == grid[2][i] and grid[0][i] != "":
+        # Check column
+        if all(grid[j][i] == grid[0][i] and grid[j][i] != "" for j in range(GRID_SIZE)):
             game_over = True
             return grid[0][i]
-    if grid[0][0] == grid[1][1] == grid[2][2] and grid[0][0] != "":
+
+    # Check diagonals for a winner
+    if all(grid[i][i] == grid[0][0] and grid[i][i] != "" for i in range(GRID_SIZE)):
         game_over = True
         return grid[0][0]
-    if grid[0][2] == grid[1][1] == grid[2][0] and grid[0][2] != "":
+    if all(grid[i][GRID_SIZE - 1 - i] == grid[0][GRID_SIZE - 1] and grid[i][GRID_SIZE - 1 - i] != "" for i in range(GRID_SIZE)):
         game_over = True
-        return grid[0][2]
+        return grid[0][GRID_SIZE - 1]
+
+    # Check for a tie
+    if all(grid[i][j] != "" for i in range(GRID_SIZE) for j in range(GRID_SIZE)):
+        game_over = True
+        return "Tie"
+
     return None
 
 # Function to draw the grid
@@ -443,7 +456,10 @@ def draw_marks(frame):
 def draw_menu(frame, hovered_button=None, game_over=False):
     if game_over and winner:
         # Get the text size
-        text = f'{winner} Wins!'
+        if winner == "Tie":
+            text = "It's a tie!"
+        else:
+            text = f'{winner} Wins!'
         (text_width, text_height), _ = cv2.getTextSize(
             text,
             cv2.FONT_HERSHEY_SIMPLEX,
