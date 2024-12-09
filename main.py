@@ -23,6 +23,7 @@ menu_open = False
 last_menu_toggle = time.time()
 menu_close_cooldown = time.time()
 resume_delay = time.time()
+new_game_delay = time.time()
 winner = None
 
 # Calculate the starting point to center the grid
@@ -220,6 +221,14 @@ while cap.isOpened():
             break
         continue
 
+    if time.time() - new_game_delay < 2:
+        cv2.putText(frame, "New Game...", (300, 400),
+                    cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 5)
+        cv2.imshow('Tic Tac Toe', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+        continue
+
     if not menu_open:
         if results.multi_hand_landmarks and not game_over:
             for hand_landmarks in results.multi_hand_landmarks:
@@ -302,7 +311,7 @@ while cap.isOpened():
                         game_over = False
                         winner = None
                         menu_open = False
-                        resume_delay = time.time()
+                        new_game_delay = time.time()
                     elif hovered_button == "quit":
                         cap.release()
                         cv2.destroyAllWindows()
