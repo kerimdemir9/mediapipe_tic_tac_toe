@@ -507,6 +507,29 @@ def check_button_press(x, y):
 # Function to detect hovered cell
 
 
+def draw_turn(frame, player):
+    text = f"{player}'s Turn"
+    (text_width, text_height), _ = cv2.getTextSize(
+        text,
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.5,  # scale
+        3   # thickness
+    )
+
+    # Calculate position to center the text
+    text_x = (frame.shape[1] - text_width) // 2
+    text_y = GRID_START_Y - 20  # Slightly above the grid
+
+    # Draw the text
+    cv2.putText(frame, text,
+                (text_x, text_y),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1.5,  # scale
+                (0, 255, 255),  # color (Yellow)
+                3   # thickness
+                )
+
+
 def get_hovered_cell(index_finger_x, index_finger_y):
     if GRID_START_X <= index_finger_x < GRID_END_X and GRID_START_Y <= index_finger_y < GRID_END_Y:
         col = (index_finger_x - GRID_START_X) // CELL_SIZE
@@ -583,6 +606,7 @@ while cap.isOpened():
                     grid[row][col] = player
                     player = 'O' if player == 'X' else 'X'
 
+        draw_turn(frame, player)  # Show whose turn it is
         draw_grid(frame)
         draw_marks(frame)
         winner = check_winner()
